@@ -8,6 +8,36 @@ $(document).ready(function () {
   const churchModal = $('#addChurchModal')
   const observationModal = $('#addObservationModal')
 
+
+  if(screen.width <= 860){
+    triggerResponsiveScreen();
+  }
+  
+  window.onresize = function() {
+    triggerResponsiveScreen();
+  }
+
+  function triggerResponsiveScreen(){
+    if (screen.width <= 1000) {
+      $("#personal-info-div").removeClass('row');
+      $("#membership-status-div").removeClass('row');
+      $("#occupation-div").removeClass('col');
+      $("#addressline1-div").removeClass('col')
+      $("#addressline2-div").removeClass('col')
+      $("#workplace-info-div").removeClass('row')
+      $("#education-info-div").removeClass('row')
+    }
+    else {
+      $("#personal-info-div").addClass('row');
+      $("#membership-status-div").addClass('row');
+      $("#occupation-div").addClass('col');
+      $("#addressline1-div").addClass('col')
+      $("#addressline2-div").addClass('col')
+      $("#workplace-info-div").addClass('row')
+      $("#education-info-div").addClass('row')
+    }
+  }
+
   function validateEmail(email) {
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     return re.test(String(email).toLowerCase());
@@ -36,6 +66,7 @@ $(document).ready(function () {
         isValid = false
     } else {
         $('#first_name_error').text('')
+        $('#first_name').val(toTitleCase($('#first_name').val()))
     }
 
     if(validator.isEmpty($('#mid_name').val())) {
@@ -48,6 +79,7 @@ $(document).ready(function () {
       isValid = false
     } else {
         $('#mid_name_error').text('')
+        $('#mid_name').val(toTitleCase($('#mid_name').val()))
     }
 
     if(validator.isEmpty($('#last_name').val())) {
@@ -56,6 +88,7 @@ $(document).ready(function () {
         isValid = false
     } else {
         $('#last_name_error').text('')
+        $('#last_name').val(toTitleCase($('#last_name').val()))
     }
 
     if(validator.isEmpty($('#birthday').val())) {
@@ -77,6 +110,7 @@ $(document).ready(function () {
         isValid = false
     } else {
         $('#occupation_error').text('')
+        $('#occupation').val(toTitleCase($('#occupation').val()))
     }
 
     if(validator.isEmpty($('#membership_status').val())) {
@@ -118,11 +152,18 @@ $(document).ready(function () {
     }
 
     if(validator.isEmpty($('#city').val())) {
-        errors += 'Cityis required\n'
+        errors += 'City is required\n'
         $('#city_error').text('Required')
         isValid = false
     } else {
         $('#city_error').text('')
+        $('#city').val(
+          toTitleCase($('#city').val())
+          .replace(" City", "")
+          .replace("Paranaque", "Parañaque")
+          .replace("Pinas", "Piñas")
+          .replace("Banos", "Baños")
+        )
     }
 
     if(validator.isEmpty($('#country').val())) {
@@ -131,6 +172,7 @@ $(document).ready(function () {
         isValid = false
     } else {
         $('#country_error').text('')
+        $('#country').val(toTitleCase($('#country').val()))
     }
 
     if (!validator.isEmail($('#email').val()) && !validator.isEmpty($('#email').val())) {
@@ -157,7 +199,92 @@ $(document).ready(function () {
       $('#telephone_error').text('')
     }
 
+  
+    $('#province').val(
+      (($('#province').val() === $('#province').val().toUpperCase()) ?
+      $('#province').val() : toTitleCase($('#province').val()))
+      .replace("Metro Manila", "NCR")
+      .replace(/./g, "")
+    )
+
+    $('#workplace').val(toTitleCase($('#workplace').val()))
+    $('#alma_mater').val(toTitleCase($('#alma_mater').val()))
+    $('#skills').val(toTitleCase($('#skills').val()))
+
+    if (validator.isEmpty($('#mother_first_name').val()) &&
+    (!validator.isEmpty($('#mother_mid_name').val()) || !validator.isEmpty($('#mother_last_name').val()))) {
+      $('#mother_first_name_error').text('Missing first name')
+      errors += 'Mother First Name Missing\n'
+      isValid = false
+    }
+    else {
+      $('#mother_first_name_error').text('')
+      $('#mother_first_name').val(toTitleCase($('#mother_first_name').val()))
+    }
+
+    if (validator.isEmpty($('#mother_mid_name').val()) &&
+    (!validator.isEmpty($('#mother_first_name').val()) || !validator.isEmpty($('#mother_last_name').val()))) {
+      $('#mother_mid_name_error').text('Missing middle initial')
+      errors += 'Mother Middle Initial Missing\n'
+      isValid = false
+    }
+    else if (!validator.isEmpty($('#mother_mid_name').val()) && !validator.isLength($('#mother_mid_name').val(), { min: 1, max: 1 })){
+      $('#mother_mid_name_error').text('Middle initial should be one letter only')
+      errors += 'Mother Middle Initial only\n'
+      isValid = false
+    } else {
+        $('#mother_mid_name_error').text('')
+        $('#mother_mid_name').val(toTitleCase($('#mother_mid_name').val()))
+    }
+
+    if (validator.isEmpty($('#mother_last_name').val()) &&
+    (!validator.isEmpty($('#mother_mid_name').val()) || !validator.isEmpty($('#mother_first_name').val()))) {
+      $('#mother_last_name_error').text('Missing last name')
+      errors += 'Mother Last Name Missing\n'
+      isValid = false
+    }
+    else {
+      $('#mother_last_name_error').text('')
+      $('#mother_last_name').val(toTitleCase($('#mother_last_name').val()))
+    }
+
+    if (validator.isEmpty($('#father_first_name').val()) &&
+      (!validator.isEmpty($('#father_mid_name').val()) || !validator.isEmpty($('#father_last_name').val()))) {
+        $('#father_first_name_error').text('Missing first name')
+      errors += 'Father First Name Missing\n'
+      isValid = false
+    }
+    else {
+      $('#father_first_name_error').text('')
+      $('#father_first_name').val(toTitleCase($('#father_first_name').val()))
+    }
+
+    if (!validator.isEmpty($('#father_mid_name').val()) && !validator.isLength($('#father_mid_name').val(), { min: 1, max: 1 })){
+      $('#father_mid_name_error').text('Middle initial should be one letter only')
+      errors += 'Father Middle Initial only\n'
+      isValid = false
+    } else {
+        $('#father_mid_name_error').text('')
+        $('#father_mid_name').val(toTitleCase($('#father_mid_name').val()))
+    }
+    
+    if (validator.isEmpty($('#father_last_name').val()) &&
+    (!validator.isEmpty($('#father_mid_name').val()) || !validator.isEmpty($('#father_first_name').val()))) {
+      $('#father_last_name_error').text('Missing last name')
+      errors += 'Father Last Name Missing\n'
+      isValid = false
+    }
+    else {
+      $('#father_last_name_error').text('')
+      $('#father_last_name').val(toTitleCase($('#father_last_name').val()))
+    }
+
     console.log(errors)
+
+    if (isValid)
+      $('#error_prompt').text('');
+    else
+      $('#error_prompt').text('Check for errors in your input');
 
     return isValid
   }
@@ -224,7 +351,8 @@ $(document).ready(function () {
         mobile: $('#mobile').val(),
         educational_attainment: $('#educational_attainment').val(),
         alma_mater: $('#alma_mater').val(),
-        family_members: $('#family_members').val(),
+        family_members: `Father: ${$('#father_first_name').val()} ${$('#father_mid_name').val()}. ${$('#father_last_name').val()}
+        Mother: ${$('#mother_first_name').val()} ${$('#mother_mid_name').val()}. ${$('#mother_last_name').val()}`,
         skills: $('#skills').val(),
         member_id: $('#member_info').attr('data-member'),
         address_id: $('#member_info').attr('data-address'),
